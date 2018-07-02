@@ -1,4 +1,4 @@
-package utils;
+package fileresolveutils;
 /**
  * 解析器父类
  * creator: zguiz

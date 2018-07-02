@@ -1,4 +1,4 @@
-package utils;
+package fileresolveutils;
 /**
  * 试题题干解析器
  * creator: zguiz
@@ -34,6 +34,7 @@ public class StemResolver extends QuestionResolver{
         return nextResolver.resolveToken(str,examQuestion);
     }
 
+    //解析xls文件
     public Resolveable resolveCell(HSSFCell title, HSSFCell cell, ExamQuestion question) {
         question.setContent(cell.getStringCellValue());
         return question;

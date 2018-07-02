@@ -1,4 +1,4 @@
-package utils;
+package fileresolveutils;
 /**
  * 文件解析
  * creator: zguiz
@@ -37,7 +37,7 @@ public class FileResolver {
             while(scanner.hasNextLine()){
                 line=scanner.nextLine().trim();
                 line=compatWindows(line);
-                //如果不是首次创建，则先压入List
+                //如果是首次创建，则先压入List
                 if("".equals(line.trim())||question==null){
                     if(question!=null){
                         questions.add(question);

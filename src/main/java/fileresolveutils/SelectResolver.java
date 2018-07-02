@@ -1,4 +1,4 @@
-package utils;
+package fileresolveutils;
 /**
  * 试题选项解析器
  * creator: zguiz
@@ -11,7 +11,6 @@ import bean.UnableResolve;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -55,7 +54,7 @@ public class SelectResolver extends QuestionResolver{
         String t=title.getStringCellValue();
         String pattern="^选项[A-Z]{1}$";
         if(Pattern.matches(pattern,t)){  //匹配选项
-            String option=String.valueOf(t.charAt(t.length()-1));  //获取到选项需要，如A
+            String option=String.valueOf(t.charAt(t.length()-1));  //获取到选项需要，如ABCD
             QuestionAnswer answer=new QuestionAnswer();
             answer.setAnswer(value);
             answerMap.put(option,answer);
@@ -74,14 +73,14 @@ public class SelectResolver extends QuestionResolver{
         int end=str.indexOf("}");
 
         String pattern="^[A-Z]{1}:*\\S{1,}";
-        while(!str.trim().equals("")){
+        while(!"".trim().equals(str)){
             String option=str.substring(start+1,end);
-            boolean isMatch=Pattern.matches(pattern,option);
+            boolean isMatch=Pattern.matches(pattern,option);   //匹配选项
             if(!isMatch){
                 throw new Exception("格式错误!");
             }
             int potinIndex=option.indexOf(":");
-            String key=option.substring(0,potinIndex);
+            String key=option.substring(0,potinIndex);  //获取前面的选项名称，如ABCD
             String content=option.substring(potinIndex+1);
             QuestionAnswer answer=new QuestionAnswer();
             answer.setAnswer(content);

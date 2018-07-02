@@ -1,4 +1,4 @@
-package utils;
+package fileresolveutils;
 /**
  * 试题类型解析器
  * creator: zguiz
@@ -39,6 +39,7 @@ public class TypeResolver extends QuestionResolver {
         return nextResolver.resolveToken(str,examQuestion);
     }
 
+    //解析xls元素
     public Resolveable resolveCell(HSSFCell title, HSSFCell cell, ExamQuestion question) {
         QuestionType type=new QuestionType();
         type.setType(cell.getStringCellValue());
@@ -46,6 +47,7 @@ public class TypeResolver extends QuestionResolver {
         return question;
     }
 
+    //调整答案格式
     public void adjustAnswer(QuestionType type, Map<String,QuestionAnswer> answers){
         if((answers!=null||answers.size()>0)&&"判断".equals(type.getType())){
             QuestionAnswer answer=answers.get(super.KEY);

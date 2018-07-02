@@ -1,4 +1,4 @@
-package utils;
+package fileresolveutils;
 /**
  * 试题分析解析器
  * creator: zguiz
@@ -10,6 +10,8 @@ import bean.UnableResolve;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
 public class AnalyResolver extends QuestionResolver{
+
+    //解析txt文件
     public Resolveable resolveToken(String str, Resolveable examQuestion) {
         int start=str.indexOf("[");
         int end=str.indexOf("]");
@@ -32,6 +34,7 @@ public class AnalyResolver extends QuestionResolver{
         return nextResolver.resolveToken(str,examQuestion);
     }
 
+    //解析xls文档
     public Resolveable resolveCell(HSSFCell title, HSSFCell cell, ExamQuestion question) {
         String str=cell.getStringCellValue();
         question.setAnalysis(str);

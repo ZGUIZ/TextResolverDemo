@@ -1,4 +1,4 @@
-package utils;
+package fileresolveutils;
 /**
  * 试题答案解析器
  * creator：zguiz
@@ -10,13 +10,13 @@ import bean.Resolveable;
 import bean.UnableResolve;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
-import java.security.acl.AclNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 public class AnswerResolver extends QuestionResolver{
 
+    //解析txt文档
     public Resolveable resolveToken(String str, Resolveable examQuestion) {
         int start=str.indexOf("[");
         int end=str.indexOf("]");
@@ -41,6 +41,7 @@ public class AnswerResolver extends QuestionResolver{
         return nextResolver.resolveToken(str,examQuestion);
     }
 
+    //解析xls文档
     public Resolveable resolveCell(HSSFCell title, HSSFCell cell, ExamQuestion question) {
         String value=cell.getStringCellValue();
         if(value==null||"".equals(value.trim())){  //当值为空的时候直接不处理
@@ -94,6 +95,7 @@ public class AnswerResolver extends QuestionResolver{
         return question;
     }
 
+    //调节答案的形式
     private Map<String,QuestionAnswer> adjustAnswer(String str, ExamQuestion question){
         Map<String,QuestionAnswer> answers=question.getAnswers();
         if(answers==null){
