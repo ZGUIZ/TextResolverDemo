@@ -39,10 +39,12 @@ public class Test {
         String pattern1="^选项[A-Z]{1}$";
         res=Pattern.matches(pattern1,"选项C");
         System.out.println(res);
+        System.out.println(String.valueOf("选项C".charAt("选项C".length()-1)));
 
         String pattern2="^空格\\d{1,}答案$";
         res=Pattern.matches(pattern2,"空格1答案");
         System.out.println(res);
+        System.out.println("空格1答案".charAt(2));
         String str1="{BLANK1:口鼻}";
 
     }
@@ -169,6 +171,20 @@ public class Test {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @org.junit.Test
+    public void testResolveXsl(){
+        List<ExamQuestion> questions=FileResolver.resolveXlsFile("C:\\Users\\admin\\Downloads\\template_questions_excel\\选择题_批量导入模板.xls");
+        for(ExamQuestion question:questions){
+            System.out.println("context="+question.getContent());
+            System.out.println("analysis="+question.getAnalysis());
+            System.out.println("type="+question.getType().getType());
+            Map<String,QuestionAnswer> answers=question.getAnswers();
+            for(String key:answers.keySet()){
+                System.out.println(key+"\t"+answers.get(key).getAnswer()+"\t"+answers.get(key).getCorrect());
+            }
         }
     }
 

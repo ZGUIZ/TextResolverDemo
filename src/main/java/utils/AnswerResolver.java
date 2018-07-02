@@ -8,9 +8,12 @@ import bean.ExamQuestion;
 import bean.QuestionAnswer;
 import bean.Resolveable;
 import bean.UnableResolve;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 
+import java.security.acl.AclNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class AnswerResolver extends QuestionResolver{
 
@@ -36,6 +39,59 @@ public class AnswerResolver extends QuestionResolver{
         }
 
         return nextResolver.resolveToken(str,examQuestion);
+    }
+
+    public Resolveable resolveCell(HSSFCell title, HSSFCell cell, ExamQuestion question) {
+        String value=cell.getStringCellValue();
+        if(value==null||"".equals(value.trim())){  //当值为空的时候直接不处理
+            return question;
+        }
+        Map<String,QuestionAnswer> answerMap=question.getAnswers();
+        if(answerMap==null){
+            answerMap=new HashMap<String, QuestionAnswer>();
+            question.setAnswers(answerMap);
+        }
+        String pattern="^空格\\d{1,}答案$";
+        String titleName=title.getStringCellValue();
+
+        //填空题答案
+        if(Pattern.matches(pattern,titleName)){
+            String blankName="BLANK"+titleName.charAt(2);
+            StringBuffer sb=new StringBuffer(blankName);
+            sb.append(":");
+            sb.append(value);
+            QuestionAnswer answer=new QuestionAnswer();
+            answer.setAnswer(sb.toString());
+            answerMap.put(blankName,answer);
+            return question;
+        }
+        String type=question.getType().getType();
+        if("判断".equals(type)){
+            QuestionAnswer answer=new QuestionAnswer();
+            if("正确".equals(cell.getStringCellValue().trim())){
+                answer.setCorrect(1);
+            } else {
+                answer.setCorrect(0);
+            }
+            answerMap.put(super.KEY,answer);
+            return question;
+        }
+
+        if("单选".equals(type)||"多选".equals(type)){
+            if(answerMap.size()>0){
+                for(int i=0;i<value.length();i++){
+                    QuestionAnswer answer=answerMap.get(String.valueOf(value.charAt(i)));
+                    answer.setCorrect(1);
+                }
+            }
+            return question;
+        }
+
+        QuestionAnswer answer=new QuestionAnswer();
+        answer.setAnswer(cell.getStringCellValue());
+        answerMap.put(super.KEY,answer);
+        question.setAnswers(answerMap);
+        return question;
     }
 
     private Map<String,QuestionAnswer> adjustAnswer(String str, ExamQuestion question){
@@ -71,6 +127,16 @@ public class AnswerResolver extends QuestionResolver{
                     answer.setCorrect(1);
                 }
             }
+            return answers;
+        }
+        if("判断".equals(question.getType().getType())){
+            QuestionAnswer answer=new QuestionAnswer();
+            if("正确".equals(str.trim())){
+                answer.setCorrect(1);
+            } else {
+                answer.setCorrect(0);
+            }
+            answers.put(super.KEY,answer);
         }
         QuestionAnswer answer = new QuestionAnswer();
         answer.setAnswer(str);
@@ -78,7 +144,4 @@ public class AnswerResolver extends QuestionResolver{
         answers.put(super.KEY, answer);
         return answers;
     }
-
-
-
 }

@@ -1,6 +1,5 @@
 package utils;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 
 import java.util.ArrayList;
@@ -22,12 +21,14 @@ public class QuestionResolverFactory {
         return resolver;
     }
 
-    public List<QuestionResolver> getResolver(HSSFRow titles){
+    public static List<QuestionResolver> getResolver(HSSFRow titles){
         List<QuestionResolver> resolvers=new ArrayList<QuestionResolver>();
         String pattern="^选项[A-Z]{1}$";
         String blankPattern="^空格\\d{1,}答案$";
         SelectResolver selectResolver=null;
         AnswerResolver answerResolver=new AnswerResolver();
+
+        //获取到标题，并获取对应的解析器
         for(int i=0;i<titles.getLastCellNum();i++){
             String value=titles.getCell(i).getStringCellValue();
             if("类型".equals(value)){

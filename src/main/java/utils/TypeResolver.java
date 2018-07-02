@@ -5,6 +5,9 @@ package utils;
  */
 
 import bean.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+
+import java.util.Map;
 
 
 public class TypeResolver extends QuestionResolver {
@@ -24,7 +27,7 @@ public class TypeResolver extends QuestionResolver {
             type.setType(str.substring(end+1));
 
             question.setType(type);
-
+            adjustAnswer(type,question.getAnswers());
             return question;
         }
 
@@ -34,5 +37,21 @@ public class TypeResolver extends QuestionResolver {
         }
 
         return nextResolver.resolveToken(str,examQuestion);
+    }
+
+    public Resolveable resolveCell(HSSFCell title, HSSFCell cell, ExamQuestion question) {
+        QuestionType type=new QuestionType();
+        type.setType(cell.getStringCellValue());
+        question.setType(type);
+        return question;
+    }
+
+    public void adjustAnswer(QuestionType type, Map<String,QuestionAnswer> answers){
+        if((answers!=null||answers.size()>0)&&"判断".equals(type.getType())){
+            QuestionAnswer answer=answers.get(super.KEY);
+            answer.setCorrect(answer.getAnswer().equals("正确")?1:0);
+            answer.setAnswer(null);
+            return;
+        }
     }
 }

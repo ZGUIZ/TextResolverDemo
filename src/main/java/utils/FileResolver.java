@@ -85,22 +85,34 @@ public class FileResolver {
     }
 
     public static List<ExamQuestion> resolveXlsFile(String path){
-        List<ExamQuestion> questions=null;
+        List<ExamQuestion> questions=new ArrayList<ExamQuestion>();
         InputStream is;
         try{
             is=new FileInputStream(path);
             HSSFWorkbook hssfWorkbook=new HSSFWorkbook(is);
 
-            HSSFSheet xssfSheet=hssfWorkbook.getSheetAt(0);
-            for(int row=0;row<=xssfSheet.getLastRowNum();row++){
-                HSSFRow xssfRow=xssfSheet.getRow(row);
-                if(xssfRow!=null){
-                    for(int i=0;i<xssfRow.getLastCellNum();i++){
-                        System.out.println(xssfRow.getCell(i).getStringCellValue());
+            //获取文件所有的表所有表
+            for(int page=0;page<hssfWorkbook.getNumberOfSheets();page++) {
+                HSSFSheet xssfSheet = hssfWorkbook.getSheetAt(page);
+                //没有数据
+                if(xssfSheet.getLastRowNum()<=1){
+                    continue;
+                }
+
+                HSSFRow titles=xssfSheet.getRow(0);     //获得标题
+                List<QuestionResolver> resolvers=QuestionResolverFactory.getResolver(titles);  //获得解析器
+                //获取行
+                for (int row = 1; row <= xssfSheet.getLastRowNum(); row++) {
+                    HSSFRow xssfRow = xssfSheet.getRow(row);
+                    if (xssfRow != null) {
+                        ExamQuestion question=new ExamQuestion();
+                        for (int i = 0; i < xssfRow.getLastCellNum(); i++) {
+                            resolvers.get(i).resolveCell(titles.getCell(i),xssfRow.getCell(i),question);
+                        }
+                        questions.add(question);
                     }
                 }
             }
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

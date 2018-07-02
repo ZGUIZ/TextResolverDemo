@@ -41,6 +41,28 @@ public class SelectResolver extends QuestionResolver{
         return nextResolver.resolveToken(str,examQuestion);
     }
 
+    //解析表内数据
+    public Resolveable resolveCell(HSSFCell title, HSSFCell cell, ExamQuestion question) {
+        String value=cell.getStringCellValue();
+        if(value==null||"".equals(value.trim())){  //如果没有内容，则不做解析
+            return question;
+        }
+        Map<String,QuestionAnswer> answerMap=question.getAnswers();
+        if(answerMap==null){
+            answerMap=new HashMap<String, QuestionAnswer>();
+            question.setAnswers(answerMap);
+        }
+        String t=title.getStringCellValue();
+        String pattern="^选项[A-Z]{1}$";
+        if(Pattern.matches(pattern,t)){  //匹配选项
+            String option=String.valueOf(t.charAt(t.length()-1));  //获取到选项需要，如A
+            QuestionAnswer answer=new QuestionAnswer();
+            answer.setAnswer(value);
+            answerMap.put(option,answer);
+        }
+        return question;
+    }
+
     //解析各个选项
     private Map<String,QuestionAnswer> adjustAnswer(String str, ExamQuestion question) throws Exception{
         Map<String,QuestionAnswer> answers=question.getAnswers();
@@ -74,14 +96,5 @@ public class SelectResolver extends QuestionResolver{
             answers.get(answer.getAnswer()).setCorrect(1);  //设置为正确答案
         }
         return answers;
-    }
-
-    public Resolveable resolveableCell(HSSFCell cell, ExamQuestion question){
-        Map<String,QuestionAnswer> answers=question.getAnswers();
-        if(answers==null){
-            answers=new HashMap<String, QuestionAnswer>();
-        }
-
-        return question;
     }
 }

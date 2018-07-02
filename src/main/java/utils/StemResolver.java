@@ -7,6 +7,7 @@ package utils;
 import bean.ExamQuestion;
 import bean.Resolveable;
 import bean.UnableResolve;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 
 public class StemResolver extends QuestionResolver{
 
@@ -31,6 +32,11 @@ public class StemResolver extends QuestionResolver{
         }
 
         return nextResolver.resolveToken(str,examQuestion);
+    }
+
+    public Resolveable resolveCell(HSSFCell title, HSSFCell cell, ExamQuestion question) {
+        question.setContent(cell.getStringCellValue());
+        return question;
     }
 
 }
